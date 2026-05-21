@@ -13,7 +13,7 @@
 
     background:
         linear-gradient(rgba(100, 100, 100, 0.3), rgba(100, 100, 100, 0.6)),
-        url(https://oboitd.ru/images/goods/big/20200205110828_Priroda_10-245.jpg);
+        url(../sakuraBackground.jpg);
         
     background-size: cover;
     background-position: center;

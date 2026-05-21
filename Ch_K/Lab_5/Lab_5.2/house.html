@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/3c02312c5f.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Booking House</title>
+    <link rel="icon" type="image/svg" sizes="64x64" 
+      href="resources/logo.svg">
+</head>
+<body>
+    <header id="header"></header>
+    <section id="page-title"></section>
+    <div class="back-btn-line">
+    <a id="back_btn" class="dark" href="index.html"><i class="fa-solid fa-arrow-left"></i>Назад</a>
+    </div>
+    <main id="top">
+        <div class="collage">
+            <img src="resources/house-outside.svg">
+            <div class="collage-info">
+                <p>Затишні дерев’яні будиночки, які заховались на окраїні лісу, зустрічатимуть Вас чудовим краєвидом на ранкові полонини.</p>
+                <p>Ви можете обрати кількість кімнат та місце, яке буде ідеальним для Вас. Територія, на якій базуються будиночки, підійде як і для великих компаній, яким потрібно бути поряд у декількох будинках, так і для пар, які хочуть бути на одинці.</p>
+            </div>
+            <img src="resources/house-living-room.svg">
+            <img src="resources/house-bedroom.svg">
+            <img src="resources/house-bathroom.svg">
+        </div>
+        <h3>Наявність місць</h3>
+        <section class="booking-section">
+            <p class="booking-title">Коли б Ви хотіли зупинись в помешканні Полонини Карпат?</p>
+            <form class="booking-form">
+                <div class="form-fields">                
+                    <div class="date-group">
+                        <label for="arrival">Дата заїзду</label>
+                        <input type="date" id="arrival" value="2026-05-21">
+                    </div>                    
+                    <div class="date-group">
+                        <label for="departure">Дата виїзду</label>
+                        <input type="date" id="departure">
+                    </div>
+                    <div class="numbers-group">
+                        <div class="counter-item">
+                        <label for="rooms">Номери</label>
+                        <input type="number" id="rooms" min="1" step="1" value="1">
+                    </div> 
+                    <div class="counter-item">
+                        <label for="adults">Дорослі</label>
+                        <input type="number" id="adults" min="1" step="1" value="2">
+                    </div>    
+                    <div class="counter-item">
+                        <label for="kids">Діти</label>
+                        <input type="number" id="kids" min="0" step="1" value="0">
+                    </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Перевірити наявність вільних місць</button>
+                </div>
+            </form>
+        </section>
+        <table class="booking-table">
+            <tr>
+                <th>Вміщує</th>
+                <th>Тип розміщення</th>
+                <th>Ціна</th>
+            </tr>
+
+            <tr>
+                <td id="people">
+                <img src="resources/person.svg">
+                <img src="resources/person.svg">
+                </td>
+
+                <td>
+                <p>Двомісний номер</p>
+                <p>1 широке двоспальне ліжко<img src="resources/bed-icon.svg" style="padding-left: 20px;"></p>
+                </td>
+
+                <td id="price">
+                <button id="show-prices-btn">Показати ціни</button>
+                </td>
+            </tr>
+        </table>
+    </main>
+    <footer id="footer"></footer>
+    <a id="scroll-to-top" href="#top"><i class="fa-solid fa-arrow-up"></i></a>
+    <script src="script.js"></script>
+</body>
+</html>

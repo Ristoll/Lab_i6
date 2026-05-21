@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>YouTube Clone - Копія сторінки з відео (робочий пошук)</title>
+    <link type="text/css" rel="stylesheet" href="/mainStyles.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #0f0f0f;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 1px 1px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: red;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            letter-spacing: -0.5px;
+        }
+
+        .country {
+            font-size: 10px;
+            vertical-align: super;
+            color: #606060;
+        }
+
+        .header-center {
+            flex: 0 1 728px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar {
+            display: flex;
+            flex: 1;
+            height: 40px;
+            position: relative;
+        }
+
+        .search-input {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-right: none;
+            padding: 0 12px;
+            font-size: 16px;
+            border-radius: 40px 0 0 40px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #1c62b9;
+        }
+
+        .search-button {
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 0 40px 40px 0;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-button:hover {
+            background-color: #e5e5e5;
+        }
+
+        .clear-search {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 8px;
+            color: #606060;
+            display: none;
+        }
+
+        .mic-button {
+            background: #f2f2f2;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 12px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .header-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 240px;
+            bottom: 0;
+            background-color: white;
+            padding-top: 12px;
+            overflow-y: auto;
+            z-index: 90;
+            box-shadow: 1px 0 5px rgba(0,0,0,0.05);
+        }
+
+        .nav-section {
+            padding: 8px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.1s;
+        }
+
+        .nav-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .nav-item.active {
+            background-color: #e5e5e5;
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            width: 24px;
+            text-align: center;
+        }
+
+        hr {
+            margin: 12px 0;
+            border: 0;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .main-content {
+            margin-top: 70px;
+            margin-left: 240px;
+            padding: 24px 24px 40px 24px;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+
+        .chips-row {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background: #f2f2f2;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chip.active-chip {
+            background: #0f0f0f;
+            color: white;
+        }
+
+        .search-results-info {
+            background: #e8f0fe;
+            padding: 12px 16px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-results-info.show {
+            display: flex;
+        }
+
+        .clear-results {
+            background: none;
+            border: none;
+            color: #065fd4;
+            cursor: pointer;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 18px;
+        }
+
+        .clear-results:hover {
+            background-color: #e5e5e5;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            font-size: 18px;
+            color: #606060;
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .videos-grid {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .video-card {
+            float: left;
+            width: calc(25% - 16px);
+            margin-right: 16px;
+            margin-bottom: 32px;
+            background: transparent;
+            border-radius: 12px;
+            transition: transform 0.1s ease;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: scale(1.02);
+        }
+
+        .video-card:nth-child(4n) {
+            margin-right: 0;
+        }
+
+        .video-card.hidden {
+            display: none;
+        }
+
+        @media (max-width: 1200px) {
+            .video-card {
+                width: calc(33.333% - 16px);
+            }
+            .video-card:nth-child(4n) {
+                margin-right: 16px;
+            }
+            .video-card:nth-child(3n) {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .video-card {
+                width: calc(50% - 16px);
+            }
+            .video-card:nth-child(3n) {
+                margin-right: 16px;
+            }
+            .video-card:nth-child(2n) {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .thumbnail {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            display: block;
+        }
+
+        .duration {
+            position: absolute;
+            bottom: 8px;
+            right: 6px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .video-info {
+            display: flex;
+            margin-top: 12px;
+            gap: 12px;
+        }
+
+        .channel-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #c4c4c4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #3c3c3c;
+            flex-shrink: 0;
+        }
+
+        .video-details {
+            flex: 1;
+        }
+
+        .video-title {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .channel-name, .video-stats {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        .banner-bg {
+            background: linear-gradient(90deg, #e0e7ff, #ffffff);
+            padding: 8px 16px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: black;
+            width: 80%;
+            max-width: 960px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 36px;
+            text-align: center;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 640px) {
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        footer {
+            clear: both;
+            text-align: center;
+            padding: 24px;
+            font-size: 12px;
+            color: #909090;
+            border-top: 1px solid #e5e5e5;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="/StartPage/index.html" class="backButton">&#8592; Назад</a>
+    <div class="header-left">
+        <button class="menu-icon" aria-label="Меню">☰</button>
+        <a href="#" class="logo">
+            <span class="logo-icon">▶️</span>
+            <span class="logo-text">YouTube<span class="country">UA</span></span>
+        </a>
+    </div>
+    <div class="header-center">
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Пошук" id="searchInput">
+            <button class="search-button" id="searchButton">🔍</button>
+        </div>
+        <button class="mic-button">🎙️</button>
+    </div>
+    <div class="header-right">
+        <span class="header-icon">📹</span>
+        <span class="header-icon">🔔</span>
+        <div class="avatar">Ю</div>
+    </div>
+</header>
+
+<aside class="sidebar">
+    <div class="nav-section">
+        <div class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span>Головна</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">🔥</span>
+            <span>Тренди</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">📦</span>
+            <span>Підписки</span>
+        </div>
+        <hr>
+        <div class="nav-item">
+            <span class="nav-icon">📚</span>
+            <span>Бібліотека</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">⏱️</span>
+            <span>Історія</span>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="chips-row">
+        <span class="chip active-chip">Всі</span>
+        <span class="chip">Музика</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">CSS</span>
+        <span class="chip">YouTube клон</span>
+        <span class="chip">Відеоуроки</span>
+    </div>
+
+    <div class="search-results-info" id="searchResultsInfo">
+        <span id="searchResultText"></span>
+        <button class="clear-results" id="clearSearchBtn">Очистити</button>
+    </div>
+
+    <div class="banner-bg">
+        🎬 Копія YouTube 
+    </div>
+
+    <div class="videos-grid" id="videosGrid">
+        <div class="video-card" data-video-id="dQw4w9WgXcQ" data-video-title="Rick Astley - Never Gonna Give You Up" data-channel="Rick Astley">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="відео прев'ю">
+                <span class="duration">3:32</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">RA</div>
+                <div class="video-details">
+                    <div class="video-title">Rick Astley - Never Gonna Give You Up (Офіційне відео)</div>
+                    <div class="channel-name">Rick Astley</div>
+                    <div class="video-stats">1,2 млрд переглядів • 14 років тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="pU9Q6oiQNd0" data-video-title="Shape of You - Ed Sheeran" data-channel="Ed Sheeran">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/pU9Q6oiQNd0/hqdefault.jpg" alt="відео прев'ю">
+                <span class="duration">4:24</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">ES</div>
+                <div class="video-details">
+                    <div class="video-title">Ed Sheeran - Shape of You (Official Music Video)</div>
+                    <div class="channel-name">Ed Sheeran</div>
+                    <div class="video-stats">6,2 млрд переглядів • 7 років тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="HGTJBPk-G5Q" data-video-title="CSS Float explained in 5 min" data-channel="WebSchool">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/HGTJBPk-G5Q/hqdefault.jpg" alt="відео прев'ю">
+                <span class="duration">5:12</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">▶️</div>
+                <div class="video-details">
+                    <div class="video-title">CSS Float explained | властивість float в CSS (приклад)</div>
+                    <div class="channel-name">WebSchool</div>
+                    <div class="video-stats">350 тис. переглядів • 2 роки тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="qz0aGYrrlhU" data-video-title="Harry Styles - As It Was" data-channel="Harry Styles">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/qz0aGYrrlhU/hqdefault.jpg" alt="прев'ю">
+                <span class="duration">2:47</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">HS</div>
+                <div class="video-details">
+                    <div class="video-title">Harry Styles - As It Was (Official Video)</div>
+                    <div class="channel-name">Harry Styles</div>
+                    <div class="video-stats">1,1 млрд переглядів • 2 роки тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="L_jWHffIx5E" data-video-title="Minecraft - Volume Alpha" data-channel="Minecraft">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/L_jWHffIx5E/hqdefault.jpg" alt="відео прев'ю">
+                <span class="duration">5:21</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">MC</div>
+                <div class="video-details">
+                    <div class="video-title">C418 - Sweden (Minecraft OST) [заспокійлива]</div>
+                    <div class="channel-name">Minecraft</div>
+                    <div class="video-stats">22 млн переглядів • 9 років тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="8k6hdhLQjbA" data-video-title="Create YouTube Clone HTML/CSS" data-channel="CodeLab">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/8k6hdhLQjbA/hqdefault.jpg" alt="clone preview">
+                <span class="duration">22:14</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">💻</div>
+                <div class="video-details">
+                    <div class="video-title">Як створити копію YouTube з HTML, CSS (робочий приклад)</div>
+                    <div class="channel-name">CodeLab</div>
+                    <div class="video-stats">128 тис. переглядів • 1 рік тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="fRh_vgS2dFE" data-video-title="Imagine Dragons - Believer" data-channel="ImagineDragons">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/fRh_vgS2dFE/hqdefault.jpg" alt="відео прев'ю">
+                <span class="duration">3:24</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">ID</div>
+                <div class="video-details">
+                    <div class="video-title">Imagine Dragons - Believer (Офіційна музика)</div>
+                    <div class="channel-name">ImagineDragons</div>
+                    <div class="video-stats">2,5 млрд переглядів • 7 років тому</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card" data-video-id="jfKfPfyJRdk" data-video-title="lofi hip hop radio" data-channel="Lofi Girl">
+            <div class="thumbnail">
+                <img src="https://img.youtube.com/vi/jfKfPfyJRdk/hqdefault.jpg" alt="lofi radio">
+                <span class="duration">LIVE</span>
+            </div>
+            <div class="video-info">
+                <div class="channel-avatar">🎧</div>
+                <div class="video-details">
+                    <div class="video-title">lofi hip hop radio 📚 - beats to relax/study</div>
+                    <div class="channel-name">Lofi Girl</div>
+                    <div class="video-stats">12 млн переглядів • Трансляція</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="no-results" id="noResultsMsg">
+        😔 Нічого не знайдено за вашим запитом.<br>
+        Спробуйте: "музика", "CSS", "Minecraft", "YouTube"
+    </div>
+
+    <footer>
+        © 2026 Копія YouTube 
+    </footer>
+</main>
+
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="video-wrapper">
+            <iframe id="modalIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const searchResultsInfo = document.getElementById('searchResultsInfo');
+        const searchResultText = document.getElementById('searchResultText');
+        const noResultsMsg = document.getElementById('noResultsMsg');
+        const videoCards = document.querySelectorAll('.video-card');
+        const videosGrid = document.getElementById('videosGrid');
+
+        const modal = document.getElementById('videoModal');
+        const modalIframe = document.getElementById('modalIframe');
+        const closeBtn = document.querySelector('.close-modal');
+
+        let currentSearchQuery = '';
+
+        function performSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            currentSearchQuery = query;
+
+            if (query === '') {
+                showAllVideos();
+                searchResultsInfo.classList.remove('show');
+                noResultsMsg.classList.remove('show');
+                return;
+            }
+
+            let visibleCount = 0;
+
+            videoCards.forEach(card => {
+                const title = card.getAttribute('data-video-title').toLowerCase();
+                const channel = card.getAttribute('data-channel').toLowerCase();
+
+                if (title.includes(query) || channel.includes(query)) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResultsMsg.classList.add('show');
+            } else {
+                noResultsMsg.classList.remove('show');
+            }
+
+            searchResultText.textContent = `Знайдено ${visibleCount} відео за запитом: "${query}"`;
+            searchResultsInfo.classList.add('show');
+        }
+
+        function showAllVideos() {
+            videoCards.forEach(card => {
+                card.classList.remove('hidden');
+            });
+            noResultsMsg.classList.remove('show');
+            searchResultsInfo.classList.remove('show');
+            searchInput.value = '';
+            currentSearchQuery = '';
+        }
+
+        function clearSearch() {
+            showAllVideos();
+            searchInput.value = '';
+            currentSearchQuery = '';
+            searchInput.focus();
+        }
+
+        function playVideo(videoId) {
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+            modalIframe.src = embedUrl;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalVideo() {
+            modalIframe.src = '';
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        clearSearchBtn.addEventListener('click', clearSearch);
+
+
+        videoCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const videoId = card.getAttribute('data-video-id');
+                if (videoId) {
+                    playVideo(videoId);
+                }
+            });
+        });
+
+        closeBtn.addEventListener('click', closeModalVideo);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalVideo();
+            }
+        });
+
+        const menuIcon = document.querySelector('.menu-icon');
+        const sidebar = document.querySelector('.sidebar');
+        if (menuIcon) {
+            menuIcon.addEventListener('click', () => {
+                if (window.innerWidth <= 700) {
+                    if (sidebar.style.display === 'none') {
+                        sidebar.style.display = 'block';
+                    } else {
+                        sidebar.style.display = 'none';
+                    }
+                } else {
+                    const isVisible = sidebar.style.display !== 'none';
+                    sidebar.style.display = isVisible ? 'none' : 'block';
+                    const main = document.querySelector('.main-content');
+                    if (main) {
+                        main.style.marginLeft = isVisible ? '0' : '240px';
+                    }
+                }
+            });
+        }
+
+        const chips = document.querySelectorAll('.chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const searchTerm = chip.textContent.trim().toLowerCase();
+                if (searchTerm === 'всі') {
+                    clearSearch();
+                } else {
+                    searchInput.value = searchTerm;
+                    performSearch();
+                }
+                
+                chips.forEach(c => c.classList.remove('active-chip'));
+                chip.classList.add('active-chip');
+            });
+        });
+    });
+</script>
+</body>
+</html>
